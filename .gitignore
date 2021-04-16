@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# IDLE configure
+.idea/
+.vscode/
+
+# TEST Code!
+main.py
