@@ -19,3 +19,17 @@ class Platforms:
     XBOX = "xbox"
     PLAYSTATION = "psn"
     STADIA = "stadia"
+
+
+class Region:
+    AS = 'as'
+    EU = 'eu'
+    KAKAO = 'kakao'
+    KRJP = 'krjp'
+    NA = 'na'
+    OC = 'oc'
+    SA = 'sa'
+    SEA = 'sea'
+    JP = 'jp'
+    RU = 'ru'
+    TOURNAMENT = 'pc-tournament'

@@ -32,18 +32,9 @@ class Player:
     def __str__(self):
         return self.name
 
-    async def current_season(self):
-        if self.client is None:
-            raise TypeError("missing 1 required positional argument: 'season'")
-        seasons = await self.client.season()
-        for i in seasons:
-            if i.current:
-                return i
-        raise ValueError("Can not find current season.")
-
     async def season_stats(self, season: str = None):
         if season is None:
-            season_fp = await self.current_season()
+            season_fp = await self.client.current_season()
             season = season_fp.id
         path = "/players/{}/seasons/{}".format(self.id, season)
         resp = await self.client.requests.get(path=path)
@@ -51,7 +42,7 @@ class Player:
 
     async def ranked_stats(self, season: str = None):
         if season is None:
-            season_fp = await self.current_season()
+            season_fp = await self.client.current_season()
             season = season_fp.id
         path = "/players/{}/seasons/{}/ranked".format(self.id, season)
         resp = await self.client.requests.get(path=path)
