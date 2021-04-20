@@ -2,6 +2,7 @@ from .api import Api
 from .player import Player
 from .season import Season
 from .matches import Matches
+from .leaderboards import Leaderboards
 
 
 class Client:
@@ -92,4 +93,5 @@ class Client:
         self.requests.platform = platform
 
         data = resp.get('data')
-        return
+        included = resp.get('included')
+        return Leaderboards(data, included)

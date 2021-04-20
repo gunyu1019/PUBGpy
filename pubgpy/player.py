@@ -9,14 +9,15 @@ class Player:
 
         self.type = self.data.get("type", "Player")
 
-#       Attributes
+        # Attributes
         self.name = self.data.get("attributes", {}).get("name")
         self.shard = self.data.get("attributes", {}).get("shardId")
         self.titleId = self.data.get("attributes", {}).get("titleId")
-        self.stats = self.data.get("attributes", {}).get("stats")
+        self.stats = Stats(self.data.get("attributes", {}).get("stats"))
         self.patchVersion = self.data.get("attributes", {}).get("patchVersion")
+        self.rank = self.data.get("attributes", {}).get("rank")
 
-#       relationships
+        # relationships
         self.assets = self.data.get("relationships", {}).get("assets", {}).get('data')
         self.matches = [_.get('id') for _ in self.data.get("relationships", {}).get("matches", {}).get('data', [])]
 
@@ -141,7 +142,7 @@ class RankedStats(BaseModel):
 
 
 class Rank:
-    def __init__(self, tier: dict, point: int):
+    def __init__(self, tier: dict, point):
         self.tier = tier.get("tier")
         self.subtier = tier.get("subTier")
         self.point = point
@@ -191,6 +192,28 @@ class GameMode(BaseModel):
 
     def __repr__(self):
         return "GameMode(type='{}')".format(self.type_class.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class Stats(BaseModel):
+    def __init__(self, data):
+        super().__init__(data)
+        if data is not None:
+            self.data = data
+            self.average_damage = data.get("averageDamage")
+            self.average_rank = data.get("averageRank")
+            self.rounds_played = data.get("games")
+            self.tier = Rank(tier=data, point=data.get("rankPoints"))
+            self.kda = data.get("kda")
+            self.kills = data.get("kills")
+            self.wins = data.get("wins")
+
+    def __repr__(self):
+        return "Stats(average_damage='{}' average_rank='{}' rounds_played='{}' tier='{}' kda='{}' kills='{}' " \
+               "wins='{}')".format(self.average_damage, self.average_rank, self.rounds_played, self.rounds_played,
+                                   self.tier, self.kda, self.kills, self.wins)
 
     def __str__(self):
         return self.__repr__()
