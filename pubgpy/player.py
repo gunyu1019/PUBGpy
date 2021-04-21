@@ -1,13 +1,14 @@
-from .models import BaseModel
+from .models import PUBGModel
 
 
-class Player:
+class Player(PUBGModel):
     def __init__(self, client, data):
         self.data = data
         self.client = client
-        self.id = self.data.get("id")
 
+        self.id = self.data.get("id")
         self.type = self.data.get("type", "Player")
+        super().__init__(self)
 
         # Attributes
         self.name = self.data.get("attributes", {}).get("name")
@@ -23,9 +24,6 @@ class Player:
 
     def __dict__(self):
         return self.data
-
-    def __eq__(self, other):
-        return other.name == self.name and other.id == self.id and self.type == other.type
 
     def __repr__(self):
         return "Player(id='{}', name='{}', type='{}')".format(self.id, self.name, self.type)
@@ -53,6 +51,16 @@ class Player:
         if position > len(self.matches):
             raise IndexError("list index out of Match List")
         return await self.client.matches(match_id=self.matches[position])
+
+    async def weapon(self):
+        path = "/players/{}/weapon_mastery".format(self.id)
+        resp = await self.client.requests.get(path=path)
+        return
+    
+    async def survival(self):
+        path = "/players/{}/survival_mastery".format(self.id)
+        resp = await self.client.requests.get(path=path)
+        return
 
 
 class SeasonStats(BaseModel):

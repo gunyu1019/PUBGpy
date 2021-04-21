@@ -1,5 +1,5 @@
 from .platforms import Platforms
-from .models import BaseModel
+from .models import PUBGModel
 
 
 def get_season(d_season: int, platform: str):
@@ -21,21 +21,16 @@ def get_season(d_season: int, platform: str):
     })
 
 
-class Season(BaseModel):
+class Season(PUBGModel):
     def __init__(self, data: dict):
-        super().__init__(data)
         self.data = data
+
         self.type = self.data.get("type")
         self.id = self.data.get("id", "season")
+        super().__init__(self)
 
         self.current = self.data.get("attributes", {}).get("isCurrentSeason")
         self.off_season = self.data.get("attributes", {}).get("isOffseason")
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     def __repr__(self):
         return "Season(id='{}', current='{}', type='{}')".format(self.id, self.current, self.type)

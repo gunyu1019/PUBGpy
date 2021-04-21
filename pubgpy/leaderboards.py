@@ -1,20 +1,20 @@
-from .models import BaseModel
+from .models import BaseModel, PUBGModel
 from .player import Player
 
 
-class Leaderboards(BaseModel):
+class Leaderboards(PUBGModel):
     def __init__(self, client, data, included):
-        super().__init__(data)
         self.data = data
         self.client = client
 
         self.id = self.data.get("id")
         self.type = self.data.get("type", "leaderboard")
+        super().__init__(self)
 
         # attributes
         attributes = self.data.get("attributes")
         self.shard_id = attributes.get("shardId")
-        self.game_mode = attributes.get("gameMode")
+        self.gamemode = attributes.get("gameMode")
         self.season = attributes.get("seasonId")
 
         # included
@@ -31,3 +31,10 @@ class Leaderboards(BaseModel):
 
         for x in relationships.get("players"):
             self.players.append(search_people(x.get("id")))
+
+    def __repr__(self):
+        return "Leaderboards(id='{}' type='{}' shard='{}' gamemode='{}' season='{}' players='{}')".format(
+            self.id, self.type, self.shard_id, self.gamemode, self.season, self.player)
+        
+    def __str__(self):
+        return self.__repr__()

@@ -2,10 +2,11 @@ from .models import BaseModel
 from dateutil import parser
 
 
-class MatchesBaseModel:
-    def __init__(self, match_id: str, match_type: str):
-        self.id = match_id
-        self.type = match_type
+class MatchesBaseModel(BaseModel):
+    def __init__(self, match_class):
+        self.id = match_class.id
+        self.type = match_class.type
+        super().__init__(match_class.data)
 
     def __eq__(self, other):
         if isinstance(other, str):
@@ -16,13 +17,14 @@ class MatchesBaseModel:
         return not self.__eq__(other)
 
 
-class Roster(BaseModel, MatchesBaseModel):
+class Roster(MatchesBaseModel):
     def __init__(self, data):
-        super().__init__(data)
         self.data = data
 
         self.type = data.get("type", "roster")
         self.id = data.get("id")
+
+        super().__init__(self)
 
 #       attributes
         attributes = data.get("attributes", {})
@@ -43,13 +45,13 @@ class Roster(BaseModel, MatchesBaseModel):
         return self.__repr__()
 
 
-class Participant(BaseModel, MatchesBaseModel):
+class Participant(MatchesBaseModel):
     def __init__(self, data):
-        super().__init__(data)
         self.data = data
 
         self.type = data.get("type", "participant")
         self.id = data.get("id")
+        super().__init__(self)
 
 #       attributes
         attributes = data.get("attributes", {})
@@ -97,13 +99,14 @@ class Participant(BaseModel, MatchesBaseModel):
         return self.name
 
 
-class Assets(BaseModel, MatchesBaseModel):
+class Assets(MatchesBaseModel):
     def __init__(self, data):
-        super().__init__(data)
         self.data = data
 
         self.type = data.get("type", "participant")
         self.id = data.get("id")
+
+        super().__init__(self)
 
 #       attributes
         attributes = data.get("attributes", {})
@@ -121,15 +124,15 @@ class Assets(BaseModel, MatchesBaseModel):
         return self.__repr__()
 
 
-class Matches(BaseModel, MatchesBaseModel):
+class Matches(MatchesBaseModel):
     def __init__(self, data, included):
-        super().__init__(data)
         self.data = data
         self.included = included
 
 #       data Information (general)
         self.id = data.get("id")
         self.type = data.get("type", "matches")
+        super().__init__(self)
 
 #       data Information (attributes)
         attributes = data.get("attributes", {})

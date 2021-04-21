@@ -94,4 +94,4 @@ class Client:
 
         data = resp.get('data')
         included = resp.get('included')
-        return Leaderboards(data, included)
+        return Leaderboards(self, data, included)
