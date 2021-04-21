@@ -65,6 +65,16 @@ class Client:
         data = await player.ranked_stats(season)
         return data
 
+    async def weapon_mastery(self, player_id: str):
+        player = self.player_id(player_id=player_id)
+        data = await player.weapon()
+        return data
+
+    async def survival_mastery(self, player_id: str):
+        player = self.player_id(player_id=player_id)
+        data = await player.survival()
+        return data
+
     async def matches(self, match_id: str):
         path = "/matches/{}".format(match_id)
         resp = await self.requests.get(path=path)

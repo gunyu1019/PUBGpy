@@ -1,4 +1,5 @@
 from .models import PUBGModel
+from .mastery import Weapon, Survival
 
 
 class Player(PUBGModel):
@@ -55,12 +56,12 @@ class Player(PUBGModel):
     async def weapon(self):
         path = "/players/{}/weapon_mastery".format(self.id)
         resp = await self.client.requests.get(path=path)
-        return
+        return Weapon(resp)
     
     async def survival(self):
         path = "/players/{}/survival_mastery".format(self.id)
         resp = await self.client.requests.get(path=path)
-        return
+        return Survival(resp)
 
 
 class SeasonStats(BaseModel):
