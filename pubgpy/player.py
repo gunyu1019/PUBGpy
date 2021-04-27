@@ -48,6 +48,11 @@ class Player(PUBGModel):
         resp = await self.client.requests.get(path=path)
         return GameMode(resp.get("data", {}).get("attributes", {}).get("rankedGameModeStats", {}), RankedStats)
 
+    async def lifetime_stats(self):
+        path = "/players/{}/seasons/lifetime".format(self.id)
+        resp = await self.client.requests.get(path=path)
+        return GameMode(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
+
     async def match(self, position: int = 0):
         if position > len(self.matches):
             raise IndexError("list index out of Match List")

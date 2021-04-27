@@ -1,3 +1,5 @@
+import datetime
+
 from .api import Api
 from .player import Player
 from .season import Season
@@ -82,6 +84,34 @@ class Client:
         included = resp.get('included')
         return Matches(data=data, included=included)
 
+    async def tournaments(self):
+        path = "/tournaments"
+        resp = await self.requests.get(path=path, ni_shards=False)
+        data = resp.get('data')
+        return
+
+    async def tournament_id(self, tournament_id: str):
+        path = "/tournaments/{}".format(tournament_id)
+        resp = await self.requests.get(path=path, ni_shards=False)
+        data = resp.get('data')
+        return
+
+    async def samples(self, create_at: (datetime.datetime, str) = None):
+        path = "/samples"
+        if create_at is not None:
+            if isinstance(create_at, datetime.datetime):
+                create_at = create_at.strftime("%Y-%m-%dT%H:%M:%SZ")
+            path += "?filter[createdAt-start]={}".format(create_at)
+        resp = await self.requests.get(path=path)
+        data = resp.get('data')
+        return
+
+    async def status(self):
+        path = "/status"
+        resp = await self.requests.get(path=path, ni_shards=False)
+        data = resp.get('data')
+        return
+
     async def leaderboards(self, region: str, game_mode: str, season: str = None):
         if season is None:
             season = await self.current_season()
@@ -97,10 +127,8 @@ class Client:
             raise TypeError("Unsupported platform (stadia not supported)")
 
         shard = '{}-{}'.format(type_platform, region)
-        self.requests.platform = shard
-        path = "/leaderboards/{}/{}".format(season, game_mode)
-        resp = await self.requests.get(path=path)
-        self.requests.platform = platform
+        path = "/shards/{}/leaderboards/{}/{}".format(shard, season, game_mode)
+        resp = await self.requests.get(path=path, ni_shards=False)
 
         data = resp.get('data')
         included = resp.get('included')
