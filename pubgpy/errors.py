@@ -23,22 +23,34 @@ SOFTWARE.
 """
 
 
-class BaseModel:
-    def __init__(self, data):
-        self.data = data
-
-    def __dict__(self):
-        return self.data
+class BasePUBGpy(Exception):
+    pass
 
 
-class PUBGModel(BaseModel):
-    def __init__(self, _class):
-        super().__init__(_class.data)
-        self.id = _class.id
-        self.type = _class.type
-    
-    def __eq__(self, other):
-        return self.id == other.id and self.type == other.type
+class APIException(BasePUBGpy):
+    def __init__(self, response, message):
+        self.response = response
+        if isinstance(message, dict):
+            self.text = message.get('title', '')
+        else:
+            self.text = message
+        if self.text != '':
+            super().__init__("{} (Status Code: {}): ".format(self.text, response.status))
+        else:
+            super().__init__("(Status Code: {})".format(response.status))
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
+
+class Unauthorized(APIException):
+    pass
+
+
+class NotFound(APIException):
+    pass
+
+
+class UnsupportedMediaType(APIException):
+    pass
+
+
+class TooManyRequests(APIException):
+    pass

@@ -1,4 +1,28 @@
-from .models import PUBGModel
+"""
+MIT License
+
+Copyright (c) 2021 gunyu1019
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+from .models import BaseModel, PUBGModel
 from .mastery import Weapon, Survival
 
 
@@ -32,7 +56,7 @@ class Player(PUBGModel):
     def __str__(self):
         return self.name
 
-    async def season_stats(self, season: str = None):
+    async def season_stats(self, season = None):
         if season is None:
             season_fp = await self.client.current_season()
             season = season_fp.id
@@ -107,12 +131,12 @@ class SeasonStats(BaseModel):
         self.wins = data.get("wins")
 
     def __repr__(self):
-        return "SeasonStats(assists='{}', boosts='{}', dBNOs='{}' daily_kills='{}' daily_wins='{}' damage_dealt='{}' " \
-               "days='{}' headshot_kills='{}' heals='{}' kills='{}' longest_kill='{}' longest_time_survived='{}' " \
-               "losses='{}' max_kill_streaks='{}' revives='{}' ride_distance='{}' road_kills='{}'" \
-               "round_most_kills='{}' rounds_played='{}' suicides='{}' swim_distance='{}' team_kills='{}' " \
-               "time_survived='{}' top10s='{}' vehicle_destroys='{}' walk_distance='{}' weapons_acquired='{}' " \
-               "weekly_wins='{} wins='{}')".format(
+        return "SeasonStats(assists={}, boosts={}, dBNOs={} daily_kills={} daily_wins={} damage_dealt={} " \
+               "days={} headshot_kills={} heals={} kills={} longest_kill={} longest_time_survived={} " \
+               "losses={} max_kill_streaks={} revives={} ride_distance={} road_kills={}" \
+               "round_most_kills={} rounds_played={} suicides={} swim_distance={} team_kills={} " \
+               "time_survived={} top10s={} vehicle_destroys={} walk_distance={} weapons_acquired={} " \
+               "weekly_wins={} wins={})".format(
                 self.assists, self.boosts, self.dbnos, self.daily_kills, self.daily_wins, self.damage_dealt, self.days,
                 self.headshot_kills, self.heals, self.kills, self.longest_kill, self.longest_time_survived, self.losses,
                 self.max_kill_streaks, self.revives, self.ride_distance, self.road_kills, self.round_most_kills,
@@ -146,8 +170,8 @@ class RankedStats(BaseModel):
         self.wins = data.get("wins")
 
     def __repr__(self):
-        return "RankedStats(assists='{}' avg_rank='{}' dbnos='{}' deaths='{}' damage_dealt='{}' kda='{}' kills='{}' " \
-               "rounds_played='{}' top10_ratio='{}' top10s='{}' win_ratio='{}' wins='{}')".format(
+        return "RankedStats(assists={} avg_rank={} dbnos={} deaths={} damage_dealt={} kda={} kills={} " \
+               "rounds_played={} top10_ratio={} top10s={} win_ratio={} wins={})".format(
                 self.assists, self.avg_rank, self.dbnos, self.deaths, self.damage_dealt, self.kda, self.kills,
                 self.rounds_played, self.top10_ratio, self.top10s, self.win_ratio, self.wins)
 

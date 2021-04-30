@@ -1,5 +1,30 @@
+"""
+MIT License
+
+Copyright (c) 2021 gunyu1019
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 from .models import BaseModel
-from dateutil import parser
+from datetime import datetime
+from .enums import MatchType, MapName, SeasonStats, get_enum, DeathType
 
 
 class MatchesBaseModel(BaseModel):
@@ -38,7 +63,7 @@ class Roster(MatchesBaseModel):
         self.teams = [x.get("id") for x in relationships.get("participant", {}).get("data", {})]
 
     def __repr__(self):
-        return "Roster(id='{}' type='{}' shard='{}' rank='{}' team_id='{}' won='{}' teams='{}') ".format(
+        return "Roster(id='{}' type='{}' shard='{}' rank={} team_id={} won='{}' teams='{}') ".format(
                 self.id, self.type, self.shard, self.rank, self.team_id, self.won, self.teams)
 
     def __str__(self):
@@ -63,7 +88,7 @@ class Participant(MatchesBaseModel):
         self.assists = stats.get("assists")
         self.boosts = stats.get("boosts")
         self.damage_dealt = stats.get("damageDealt")
-        self.death_type = stats.get("deathType")
+        self.death_type = get_enum(DeathType, stats.get("deathType"))
         self.headshot_kills = stats.get("headshotKills")
         self.heals = stats.get("heals")
         self.kill_place = stats.get("killPlace")
@@ -84,11 +109,11 @@ class Participant(MatchesBaseModel):
         self.win_place = stats.get("winPlace")
 
     def __repr__(self):
-        return "Participant(id='{}' type='{}' shard='{}' dbnos='{}' assists='{}' boosts='{}' damage_dealt='{}' " \
-               "death_type='{}' headshot_kills='{}' heals='{}' kill_place='{}' kill_streaks='{}' kills='{}' " \
-               "longest_kill='{}' name='{]' player_id='{}' revives='{}' ride_distance='{}' road_kills='{}' " \
-               "swim_distance='{}' team_kills='{}' time_survived='{}' vehicle_destroys='{}' walk_distance='{}' " \
-               "weapons_acquired='{}' win_place='{}')".format(
+        return "Participant(id='{}' type='{}' shard='{}' dbnos={} assists={} boosts={} damage_dealt={} " \
+               "death_type='{}' headshot_kills={} heals={} kill_place={} kill_streaks={} kills={} " \
+               "longest_kill={} name='{]' player_id='{}' revives={} ride_distance={} road_kills={} " \
+               "swim_distance={} team_kills={} time_survived={} vehicle_destroys={} walk_distance={} " \
+               "weapons_acquired={} win_place={})".format(
                 self.id, self.type, self.shard, self.dbnos, self.assists, self.damage_dealt, self.death_type,
                 self.headshot_kills, self.heals, self.kill_place, self.kill_streaks, self.kills, self.longest_kill,
                 self.name, self.player_id, self.revives, self.ride_distance, self.road_kills, self.swim_distance,
@@ -112,8 +137,8 @@ class Assets(MatchesBaseModel):
         attributes = data.get("attributes", {})
         self.shard = attributes.get("shardId")
         self.url = attributes.get("url")
-        create_at = attributes.get("createdAt")
-        self.created_at = parser.isoparse(create_at).replace(tzinfo=None)
+        created_at = attributes.get("createdAt")
+        self.created_at = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
         self.name = attributes.get("name", "Telemetry")
 
     def __repr__(self):
@@ -140,14 +165,14 @@ class Matches(MatchesBaseModel):
         self.title = attributes.get("titleId")
         self.shard = attributes.get("shardId")
         self.tags = attributes.get("tags")
-        self.map_name = attributes.get("mapName")
-        self.match_type = attributes.get("matchType")
+        self.map = get_enum(MapName, attributes.get("mapName"))
+        self.match_type = get_enum(MatchType, attributes.get("matchType"))
         self.duration = attributes.get("duration")
         self.stats = attributes.get("stats")
-        self.season_state = attributes.get("seasonState")
+        self.state = get_enum(SeasonStats, attributes.get("seasonState"))
 
-        create_at = attributes.get("createdAt")
-        self.created_at = parser.isoparse(create_at).replace(tzinfo=None)
+        created_at = attributes.get("createdAt")
+        self.created_at = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
         self.custom = attributes.get("isCustomMatch")
 
 #       data Information (relationships)
@@ -171,7 +196,7 @@ class Matches(MatchesBaseModel):
 
     def __repr__(self):
         return "Matches(id='{}' type='{}' game_mode='{}' title='{}' shard='{}' tags='{}' map_name='{}' " \
-               "match_type='{}' duration='{}' stats'{}' season_state='{}' created_at='{}' custom='{}') ".format(
+               "match_type='{}' duration={} stats'{}' season_state='{}' created_at='{}' custom='{}') ".format(
                 self.id, self.type, self.game_mode, self.title, self.shard, self.tags, self.map_name, self.match_type,
                 self.duration, self.stats, self.season_state, self.created_at, self.custom)
 

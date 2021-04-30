@@ -23,42 +23,26 @@ SOFTWARE.
 """
 
 from .models import PUBGModel
-from .player import Player
 
 
-class Leaderboards(PUBGModel):
-    def __init__(self, client, data, included):
+class Sample(PUBGModel):
+    def __init__(self, client, data):
         self.data = data
         self.client = client
 
+        self.type = self.data.get("type")
         self.id = self.data.get("id")
-        self.type = self.data.get("type", "leaderboard")
         super().__init__(self)
 
-        # attributes
         attributes = self.data.get("attributes")
-        self.shard_id = attributes.get("shardId")
-        self.gamemode = attributes.get("gameMode")
-        self.season = attributes.get("seasonId")
+        self.created_at = attributes.get("createdAt")
+        self.title = attributes.get("titleId")
+        self.shard = attributes.get("shardId")
 
-        # included
-        self.included = list()
-        for i in included:
-            self.included.append(Player(client, i))
-
-        # relationships
-        self.players = list()
         relationships = self.data.get("relationships")
+        self.matches = [i.get("id") for i in relationships.get("matches", {}).get("data", [])]
 
-        def search_people(player_id):
-            next(players for players in self.included if players == player_id)
-
-        for x in relationships.get("players"):
-            self.players.append(search_people(x.get("id")))
-
-    def __repr__(self):
-        return "Leaderboards(id='{}' type='{}' shard='{}' gamemode='{}' season='{}' players='{}')".format(
-            self.id, self.type, self.shard_id, self.gamemode, self.season, self.player)
-        
-    def __str__(self):
-        return self.__repr__()
+    async def match(self, position: int = 0):
+        if position > len(self.matches):
+            raise IndexError("list index out of Match List")
+        return await self.client.matches(match_id=self.matches[position])
