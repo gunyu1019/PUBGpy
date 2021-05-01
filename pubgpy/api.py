@@ -37,8 +37,8 @@ class Api:
     token : str
         Contains the token value issued by the PUBG API.
         If you have not been issued or if you forget, please get the key from https://developer.pubg.com/.
-    platform : str, Platforms, optional
-         :class:`Platforms` information to report with API by substituting the value of `Platform` or string.
+    platform : `str` or `Platforms`, optional
+         `Platforms` information to report with API by substituting the value of `Platform` or string.
         Sometimes the platform type is not required for some features that do not require it.
     """
     def __init__(self, token: str, platform: (str, Platforms) = None):

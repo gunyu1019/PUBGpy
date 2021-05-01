@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from .season import Season
 from .models import BaseModel, PUBGModel
 from .mastery import Weapon, Survival
 
@@ -56,18 +57,22 @@ class Player(PUBGModel):
     def __str__(self):
         return self.name
 
-    async def season_stats(self, season = None):
+    async def season_stats(self, season: (Season, str) = None):
         if season is None:
             season_fp = await self.client.current_season()
             season = season_fp.id
+        elif isinstance(season, Season):
+            season = season.id
         path = "/players/{}/seasons/{}".format(self.id, season)
         resp = await self.client.requests.get(path=path)
         return GameMode(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
 
-    async def ranked_stats(self, season: str = None):
+    async def ranked_stats(self, season: (Season, str) = None):
         if season is None:
             season_fp = await self.client.current_season()
             season = season_fp.id
+        elif isinstance(season, Season):
+            season = season.id
         path = "/players/{}/seasons/{}/ranked".format(self.id, season)
         resp = await self.client.requests.get(path=path)
         return GameMode(resp.get("data", {}).get("attributes", {}).get("rankedGameModeStats", {}), RankedStats)

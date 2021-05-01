@@ -23,11 +23,8 @@ SOFTWARE.
 """
 
 
-class BasePUBGpy(Exception):
-    pass
-
-
-class APIException(BasePUBGpy):
+class APIException(Exception):
+    """Exception occurred while communicating with API."""
     def __init__(self, response, message):
         self.response = response
         if isinstance(message, dict):
@@ -41,16 +38,20 @@ class APIException(BasePUBGpy):
 
 
 class Unauthorized(APIException):
+    """Unauthorized"""
     pass
 
 
 class NotFound(APIException):
+    """Not Found"""
     pass
 
 
 class UnsupportedMediaType(APIException):
+    """Unsupported Media Type"""
     pass
 
 
 class TooManyRequests(APIException):
+    """Too Many Requests"""
     pass

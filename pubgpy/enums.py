@@ -14,6 +14,7 @@ class Platforms(Enum):
 
 
 class Region(Enum):
+    """Region supported"""
     AS = 'as'
     EU = 'eu'
     KAKAO = 'kakao'
@@ -31,6 +32,7 @@ class Region(Enum):
 
 
 class GameMode(Enum):
+    """GameMode"""
     solo = "solo"
     duo = "duo"
     squad = "squad"
@@ -40,6 +42,7 @@ class GameMode(Enum):
 
 
 class MatchType(Enum):
+    """Game Match Type"""
     arcade = "arcade"
     custom = "custom"
     event = "event"
@@ -48,6 +51,7 @@ class MatchType(Enum):
 
 
 class MapName(Enum):
+    """Game Map Name"""
     erangel = "Baltic_Main"
     paramo = "Chimera_Main"
     miramar = "Desert_Main"
@@ -60,12 +64,14 @@ class MapName(Enum):
 
 
 class SeasonStats(Enum):
+    """Season Status"""
     progress = "progress"
     prepare = "prepare"
     closed = "closed"
 
 
 class DeathType(Enum):
+    """Death Type"""
     alive = "alive"
     kill = "byplayer"
     zone = "byzone"
@@ -76,5 +82,5 @@ class DeathType(Enum):
 def get_enum(cls, val):
     enum_val = [i for i in cls if i.value == val]
     if len(enum_val) == 0:
-        return None
+        return val
     return enum_val[0]

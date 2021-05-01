@@ -27,6 +27,7 @@ from .player import Player
 
 
 class Leaderboards(PUBGModel):
+    """Leaderboard objects show the current rank of the top 500 players for a game mode."""
     def __init__(self, client, data, included):
         self.data = data
         self.client = client
