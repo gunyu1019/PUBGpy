@@ -24,10 +24,11 @@ SOFTWARE.
 
 from .models import BaseModel
 from datetime import datetime
-from .enums import MatchType, MapName, SeasonStats, get_enum, DeathType
+from .enums import MatchType, MapName, SeasonStats, get_enum, DeathType, GameMode, Platforms
 
 
 class MatchesBaseModel(BaseModel):
+    """Base model for match data."""
     def __init__(self, match_class):
         self.id = match_class.id
         self.type = match_class.type
@@ -43,6 +44,29 @@ class MatchesBaseModel(BaseModel):
 
 
 class Roster(MatchesBaseModel):
+    """Rosters track the scores of each opposing group of participants. Rosters can have one or many participants
+     depending on the game mode. Roster objects are only meaningful within the context of a match and are not exposed
+      as a standalone resource.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the matches response
+    type : str
+        Identifier for this object type
+    shard : Platforms
+        Type of shard ID
+    rank : int
+        Roster's placement in the match
+    team_id : int
+        An arbitrary ID assigned to this roster
+    won : str
+        Indicates if this roster won the match
+    teams : list
+        An array of references to participant objects that can be found in the included array
+    """
     def __init__(self, data):
         self.data = data
 
@@ -71,6 +95,66 @@ class Roster(MatchesBaseModel):
 
 
 class Participant(MatchesBaseModel):
+    """Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
+     of event objects that provide further insight into a match.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the matches response
+    type : str
+        Identifier for this object type
+    shard : Platforms
+        Type of shard ID
+    dbnos : int
+        Number of players knocked
+    assists : int
+        Number of enemy players this player damaged that were killed by teammates
+    boosts : int
+        Number of boost items used
+    damage_dealt : float
+        Total damage dealt. Note: Self inflicted damage is subtracted
+    death_type : DeathType
+        The way by which this player died, or alive if they didn't
+    headshot_kills : int
+        Number of enemy players killed with headshots
+    heals : int
+        Number of healing items used
+    kill_place : int
+        This player's rank in the match based on kills
+    kill_streaks : int
+        Total number of kill streaks
+    kills : int
+        Number of enemy players killed
+    longest_kill : float
+        Highest Longest Kill
+    name : str
+        PUBG IGN of the player associated with this participant
+    player_id : str
+        Account ID of the player associated with this participant
+    revives : int
+        Number of times this player revived teammates
+    ride_distance : float
+        Total distance traveled in vehicles measured in meters
+    road_kills : int
+        Number of kills while in a vehicle
+    swim_distance : float
+        Total distance traveled while swimming measured in meters
+    team_kills : int
+        Number of times this player killed a teammate
+    time_survived : float
+        Amount of time survived measured in seconds
+    vehicle_destroys : int
+        Amount of Number of vehicles destroyed
+    walk_distance : float
+        Total distance traveled on foot measured in meters
+    weapons_acquired : int
+        Number of weapons picked up
+    win_place : int
+        This player's placement in the match
+    """
     def __init__(self, data):
         self.data = data
 
@@ -125,6 +209,26 @@ class Participant(MatchesBaseModel):
 
 
 class Assets(MatchesBaseModel):
+    """Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
+     of event objects that provide further insight into a match.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the matches response
+    type : str
+        Identifier for this object type
+    shard : Platforms
+        Type of shard ID
+    url : str
+        Link to the telemetry.json file
+    created_at : str
+        Time of telemetry creation
+    name : str
+        Telemetry
+    """
     def __init__(self, data):
         self.data = data
 
@@ -150,6 +254,52 @@ class Assets(MatchesBaseModel):
 
 
 class Matches(MatchesBaseModel):
+    """	Match objects contain information about a completed match such as the game mode played, duration,
+     and which players participated.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    included :
+        Source data for additional players.
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the matches response
+    type : str
+        Identifier for this object type
+    gamemode : GameMode
+        Matches's game mode
+    title : str
+        Identifies the studio and game
+    shard : Platforms
+        Type of shard ID
+    tags : str
+        Type of tag (Sometimes Not Worked)
+    map : MapName
+        Map name
+    match_type : MatchType
+        Type of match
+    duration : int
+        Length of the match measured in seconds
+    stats : str
+        Type of stats (Sometimes Not Worked)
+    state : SeasonStats
+        State of the season
+    created_at : datetime.datetime
+        Time this match object was stored in the API
+    custom : bool
+        True if this match is a custom match
+    rosters : list
+        Contains ID values for Rosters.
+    assets : list
+        Contains ID values for Assets.
+    participant : list of Participant
+        A class containing user data is included.
+    roster : list of Roster
+        A class containing team data is included.
+    asset : list of Asset
+        A class containing asset data is included.
+    """
     def __init__(self, data, included):
         self.data = data
         self.included = included
@@ -161,9 +311,9 @@ class Matches(MatchesBaseModel):
 
 #       data Information (attributes)
         attributes = data.get("attributes", {})
-        self.game_mode = attributes.get("gameMode")
+        self.gamemode = get_enum(GameMode, attributes.get("gameMode"))
         self.title = attributes.get("titleId")
-        self.shard = attributes.get("shardId")
+        self.shard = get_enum(Platforms, attributes.get("shardId"))
         self.tags = attributes.get("tags")
         self.map = get_enum(MapName, attributes.get("mapName"))
         self.match_type = get_enum(MatchType, attributes.get("matchType"))
@@ -204,6 +354,26 @@ class Matches(MatchesBaseModel):
         return self.__repr__()
 
     def filter(self, filter_id, base_model: (Roster, Participant, Assets) = None):
+        """Find class(Roster, Participant, Assets) for a specific ID.
+
+        Parameters
+        ----------
+        filter_id : str
+            Insert the ID value to find.
+        base_model : class, optional
+            Insert a class about what to find among Assets, Users(Participant), and Teams(Roster).
+            If you don't put in a value, search among the total values.
+
+        Returns
+        -------
+        Roster, Participant, Assets :
+            Returns filtered class.
+
+        Raises
+        ------
+        ValueError :
+            No results for the item in searching data
+        """
         list_search = list()
         if base_model is not None:
             if base_model == Roster:
@@ -227,6 +397,17 @@ class Matches(MatchesBaseModel):
         return result
 
     def get_team(self, team_id: str):
+        """Bring up a list of team members through Team ID.
+
+        Parameters
+        ----------
+        team_id : str
+
+        Returns
+        -------
+        list of Participant :
+            Class of the team members(Participant) is returned.
+        """
         if team_id not in self.rosters:
             raise ValueError("Non-existent Team ID")
 
@@ -238,12 +419,36 @@ class Matches(MatchesBaseModel):
         return member
 
     def get_player(self, nickname: str):
+        """Recall users configured with nicknames from the list of players.
+
+        Parameters
+        ----------
+        nickname : str
+            Player's Nickname
+
+        Returns
+        -------
+        Participant :
+            If you find a suitable user for the nickname, the appropriate class(Participant) is returned.
+        """
         players = self.participant
         for i in players:
             if i.name == nickname:
                 return i
 
     def get_player_id(self, player_id: str):
+        """Recall users configured with player's id from the list of players.
+
+        Parameters
+        ----------
+        player_id : str
+            Player's ID
+
+        Returns
+        -------
+        Participant :
+            If you find a suitable user for the nickname, the appropriate class(Participant) is returned.
+        """
         players = self.participant
         for i in players:
             if i.player_id == player_id:

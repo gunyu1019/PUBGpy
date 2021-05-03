@@ -22,12 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from .enums import GameMode, get_enum
 from .models import PUBGModel
 from .player import Player
 
 
 class Leaderboards(PUBGModel):
-    """Leaderboard objects show the current rank of the top 500 players for a game mode."""
+    """Leaderboard objects show the current rank of the top 500 players for a game mode.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    client :
+        Contains PUBGpy's main client class.
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the leaderboard response
+    type : str
+        Identifier for this object type
+    shard : str
+        Type of shard ID
+    gamemode : GameMode
+        Leaderboard's game mode
+    season : GameMode
+        Season information
+    included : list of Player
+        Players' information is stored.
+    players : list of Player
+        Players' information is stored. (Sorted by rank)
+    """
     def __init__(self, client, data, included):
         self.data = data
         self.client = client
@@ -38,8 +61,8 @@ class Leaderboards(PUBGModel):
 
         # attributes
         attributes = self.data.get("attributes")
-        self.shard_id = attributes.get("shardId")
-        self.gamemode = attributes.get("gameMode")
+        self.shard = attributes.get("shardId")
+        self.gamemode = get_enum(GameMode, attributes.get("gameMode"))
         self.season = attributes.get("seasonId")
 
         # included
@@ -59,7 +82,7 @@ class Leaderboards(PUBGModel):
 
     def __repr__(self):
         return "Leaderboards(id='{}' type='{}' shard='{}' gamemode='{}' season='{}' players='{}')".format(
-            self.id, self.type, self.shard_id, self.gamemode, self.season, self.player)
+            self.id, self.type, self.shard, self.gamemode, self.season, self.players)
         
     def __str__(self):
         return self.__repr__()

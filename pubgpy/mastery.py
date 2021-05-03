@@ -23,29 +23,95 @@ SOFTWARE.
 """
 
 from .models import BaseModel, PUBGModel
+from .enums import Platforms, get_enum
 
 
 class Weapon(PUBGModel):
+    """Weapon Mastery contains weapon summaries for the lifetime of a player
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the leaderboard response
+    type : str
+        Identifier for this object type
+    platform : str
+        Type of platform
+    latest_match : str
+        Match ID of the last completed match that was played
+    summaries : list of WeaponSummary
+        Match ID of the last completed match that was played
+    """
+
     def __init__(self, data):
         self.data = data
 
         self.type = self.data.get("type", "weaponMasterySummary")
         self.id = self.data.get("id")
-        
+
         super().__init__(self)
 
         # attributes
         attributes = self.data.get("attributes")
-        self.platform = attributes.get("platform")
+        self.platform = get_enum(Platforms, attributes.get("platform"))
         self.latest_match = attributes.get("latestMatchId")
-        
+
         self.summaries = list()
         summaries = attributes.get("weaponSummaries")
         for x in summaries.keys():
             self.summaries.append(WeaponSummary(x))
 
+    def __repr__(self):
+        return "Weapon(id='{}', type='{}', platform='{}', latest_match='{}')".format(
+            self.id, self.type, self.platform, self.latest_match)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class WeaponSummary(BaseModel):
+    """Weapon summary for each weapon
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    xp : int
+        Total amount of XP earned for this weapon
+    level : int
+        Current level of this weapon
+    tier : int
+        Current tier of this weapon
+    most_defeats : int
+        Most defeats in a single match
+    defeats : int
+        Total number of defeats in their career
+    most_damage : float
+        Most damage that the player did in a single match
+    damage : float
+        Total damage that the player has done in their career
+    most_headshots : float
+        Most headshots that the player did in a single match
+    headshots : int
+        Total headshots that the player has done in their career
+    longest_defeat : float
+        Longest distance that the player got a defeat for
+    long_range_defeat : int
+        Number of long range defeats for the player
+    kills : int
+        Total number of kills for the player
+    most_kills : int
+        Most kills for a player in a single match
+    groggies : int
+        Total number of times that the player has caused another player to become groggy during their career
+    most_groggies : int
+        Highest number of times that the player has caused another player to become groggy during a match
+    medal : list of Medal
+        All of the medals received for this weapon
+    """
+
     def __init__(self, data):
         self.data = data
         super(BaseModel, self).__init__(data)
@@ -53,13 +119,13 @@ class WeaponSummary(BaseModel):
         self.xp = self.data.get("XPTotal")
         self.level = self.data.get("LevelCurrent")
         self.tier = self.data.get("TierCurrent")
-        self.xp = self.data.get("XPTotal")
 
         # Stats
         stats = self.data.get("StatsTotal")
         self.most_defeats = stats.get("MostDefeatsInAGame")
         self.defeats = stats.get("Defeats")
-        self.defeats = stats.get("Defeats")
+        self.most_damage = stats.get("MostDamagePlayerInAGame")
+        self.damage = stats.get("DamagePlayer")
         self.most_headshots = stats.get("MostHeadShotsInAGame")
         self.headshots = stats.get("HeadShots")
         self.longest_defeat = stats.get("LongestDefeat")
@@ -73,8 +139,31 @@ class WeaponSummary(BaseModel):
         for i in self.data.get("Medals"):
             self.medal.append(Medal(i))
 
+    def __repr__(self):
+        return "WeaponSummary(xp={}, level={}, tier={}, most_defeats={}, defeats={}, most_damage={}, damage={}, " \
+               "most_headshots={}, headshots={}, longest_defeat={}, kills={}, most_kills={}, groggies={}, " \
+               "most_groggies={}) ".format(self.xp, self.level, self.tier, self.most_defeats, self.defeats,
+                                           self.most_damage, self.damage, self.most_headshots, self.headshots,
+                                           self.longest_defeat, self.kills, self.most_kills, self.groggies,
+                                           self.most_groggies)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Medal(BaseModel):
+    """All of the medals received for this weapon
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        Name of the medal
+    count : int
+        Number of times that the player received the medal
+    """
+
     def __init__(self, data):
         self.data = data
 
@@ -82,8 +171,66 @@ class Medal(BaseModel):
         self.id = self.data.get("MedalId")
         self.count = self.data.get("Count")
 
+    def __repr__(self):
+        return "Medal(id='{}', count={})".format(self.id, self.count)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Survival(PUBGModel):
+    """Survival Mastery contains survival mastery data for a player
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        Player ID (also known as account ID)
+    type : str
+        Identifier for this object type
+    xp : int
+        Survival Mastery experience points
+    level : int
+        Survival Mastery level
+    round_played : int
+        Number of matches played that count toward Survival Mastery
+    last_match : str
+        Match ID of the last completed match that was played
+    air_drops : Stats
+        Number of air drops called
+    damage_dealt : Stats
+        Total amount of damage dealt to other players
+    damage_taken : Stats
+        Total amount of damage taken
+    swimming : Stats
+        Total distance travelled by swimming
+    vehicle : Stats
+        Total distance travelled by vehicle
+    foot : Stats
+        Total distance travelled on foot
+    distance : Stats
+        Total distance travelled by foot, swimming, and vehicle
+    healed : Stats
+        Total amount healed
+    hot_drop : Stats
+        Number of times landing in a hot drop location
+    enemy_crates : Stats
+        Number of enemy crates looted
+    position : Stats
+        Match placement
+    revived : Stats
+        Number of times revived
+    teammates_revived : Stats
+        Number of times reviving another player
+    time_survived : Stats
+        Total time survived
+    throwable : Stats
+        Number of throwables thrown
+    top10 : Stats
+        Number of times placing in the top 10
+    """
+
     def __init__(self, data):
         self.data = data
 
@@ -115,8 +262,31 @@ class Survival(PUBGModel):
         self.throwable = Stats(stats.get("throwablesThrown"))
         self.top10 = Stats(stats.get("top10"))
 
+    def __repr__(self):
+        return "Survival(id='{}', type='{}', xp={}, level={}, round_played='{}' last_match='{}'".format(
+                self.id, self.type, self.xp, self.level, self.round_played, self.last_match)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Stats(BaseModel):
+    """Model for stats values from Survival Mastery.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    total : int
+        Career total
+    average : int
+        Career average
+    career : int
+        Career best
+    last_match : int
+        Value in last match
+    """
+
     def __init__(self, data):
         super().__init__(data)
         self.data = data
@@ -125,3 +295,10 @@ class Stats(BaseModel):
         self.average = self.data.get("average")
         self.career = self.data.get("careerBest")
         self.last_match = self.data.get("lastMatchValue")
+
+    def __repr__(self):
+        return "Stats(total={}, average={} career={} last_match={})".format(
+            self.total, self.average, self.career, self.last_match)
+
+    def __str__(self):
+        return self.__repr__()

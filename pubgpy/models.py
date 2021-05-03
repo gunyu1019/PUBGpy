@@ -24,6 +24,7 @@ SOFTWARE.
 
 
 class BaseModel:
+    """It's the model that underlies all PUBGpy."""
     def __init__(self, data):
         self.data = data
 
@@ -32,6 +33,7 @@ class BaseModel:
 
 
 class PUBGModel(BaseModel):
+    """Based on models provided by PUBG API."""
     def __init__(self, _class):
         super().__init__(_class.data)
         self.id = _class.id

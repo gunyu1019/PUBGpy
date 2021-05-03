@@ -30,6 +30,7 @@ from datetime import datetime
 
 class Tournaments(PUBGModel):
     def __init__(self, client, data):
+        self.data = data
         super().__init__(data)
         self.client = client
         self.id = data.get("id")
