@@ -4,35 +4,26 @@ about: Create a report to help us improve
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
-**Describe the bug**
+**Describe the bug**<br/>
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**To Reproduce**<br/>
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected behavior**<br/>
+What did you expect to happen?
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Actual Results**<br/>
+What actually happened?
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Exception**<br/>
+If an exception occurs, an appropriate message is returned. Let me know the message.
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**System Information:**<br/>
+Run `python -m PUBGpy -v` and paste this information below.
+Please tell us the Python version at same time.
 
-**Additional context**
+**Additional context**<br/>
 Add any other context about the problem here.
