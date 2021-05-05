@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .enums import GameMode, get_enum
+from .enums import GameMode, Platforms, get_enum
 from .models import PUBGModel
 from .player import Player
 
@@ -40,7 +40,7 @@ class Leaderboards(PUBGModel):
         A randomly generated ID assigned to this resource object for linking elsewhere in the leaderboard response
     type : str
         Identifier for this object type
-    shard : str
+    shard : Platforms
         Type of shard ID
     gamemode : GameMode
         Leaderboard's game mode
@@ -61,7 +61,7 @@ class Leaderboards(PUBGModel):
 
         # attributes
         attributes = self.data.get("attributes")
-        self.shard = attributes.get("shardId")
+        self.shard = get_enum(Platforms, attributes.get("shardId"))
         self.gamemode = get_enum(GameMode, attributes.get("gameMode"))
         self.season = attributes.get("seasonId")
 

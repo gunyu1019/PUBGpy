@@ -23,9 +23,31 @@ SOFTWARE.
 """
 
 from .models import PUBGModel
+from .enums import Platforms, get_enum
 
 
 class Sample(PUBGModel):
+    """	Sample objects contain the ID of a match.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    client :
+        Contains PUBGpy's main client class.
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the sample response
+    type : str
+        Identifier for this object type
+    shard : Platforms
+        Type of shard ID
+    created_at : str
+        Time when Sample Data was created.
+    title : str
+        Type of title
+    matches : list
+        Sample Imported Match Data
+    """
     def __init__(self, client, data):
         self.data = data
         self.client = client
@@ -37,12 +59,24 @@ class Sample(PUBGModel):
         attributes = self.data.get("attributes")
         self.created_at = attributes.get("createdAt")
         self.title = attributes.get("titleId")
-        self.shard = attributes.get("shardId")
+        self.shard = get_enum(Platforms, attributes.get("shardId"))
 
         relationships = self.data.get("relationships")
         self.matches = [i.get("id") for i in relationships.get("matches", {}).get("data", [])]
 
     async def match(self, position: int = 0):
+        """Recall match dates in sample data to suit the location.
+
+        Parameters
+        ----------
+        position : int
+            location of matches list
+
+        Returns
+        -------
+        Matches :
+            Contains classes for Matches.
+        """
         if position > len(self.matches):
             raise IndexError("list index out of Match List")
         return await self.client.matches(match_id=self.matches[position])

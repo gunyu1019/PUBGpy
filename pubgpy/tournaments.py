@@ -29,6 +29,27 @@ from datetime import datetime
 
 
 class Tournaments(PUBGModel):
+    """Tournament objects contain information about a tournament, mainly the IDs of its matches.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    client :
+        Contains PUBGpy's main client class.
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the leaderboard response
+    type : str
+        Identifier for this object type
+    created_at : datetime.datetime
+        Displays the first time the competition took place.
+    matches : list
+        A list of match ids.
+
+    Notes
+    -----
+    If the selected Attributes returns None, it needs to be loaded through :def:`load()`.
+    """
     def __init__(self, client, data):
         self.data = data
         super().__init__(data)
@@ -51,6 +72,28 @@ class Tournaments(PUBGModel):
         return self.id
 
     async def match(self, position: int = 0):
+        """Get a tournament match.
+
+        Notes
+        -----
+        Authorization is not required endpoint because it is not rate-limited.
+        Tournament match information can only be inquired with the function.
+
+        Parameters
+        ----------
+        position : int
+            Gets the location of the inquired tournament's match list. It must be above zero.
+
+        Returns
+        -------
+        Matches :
+            Contains classes for Matches.
+
+        Raises
+        ------
+        IndexError :
+            List index out of Match List
+        """
         if position > len(self.matches):
             raise IndexError("list index out of Match List ()")
         match_id = self.matches[position]
@@ -61,4 +104,12 @@ class Tournaments(PUBGModel):
         return Matches(data=data, included=included)
 
     async def load(self):
+        """Call in detail about the competition.
+         In order to include match information and the opening time of the competition, information must be recalled.
+
+        Returns
+        -------
+        Tournaments :
+            Returns a tournament value that has been loaded properly.
+        """
         return self.client.tournament_id(self.id)

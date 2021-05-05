@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import datetime
+import logging
 
 from .api import Api
 from .player import Player
@@ -33,6 +34,8 @@ from .matches import Matches
 from .leaderboards import Leaderboards
 from .tournaments import Tournaments
 from .sample import Sample
+
+log = logging.getLogger(__name__)
 
 
 class Client:
@@ -55,6 +58,7 @@ class Client:
         else:
             self.Platform = platform
         self.requests = Api(token=token, platform=self.Platform)
+        log.info("PUBGpy client was created. (Platform: {})".format(platform))
 
     def platform(self, platform: (str, Platforms) = None) -> (Platforms, str):
         """Change the platform type through the function.
@@ -71,6 +75,7 @@ class Client:
         Platforms :
             Returns platform value set.
         """
+        log.info("PUBGpy changed platform ({} -> {})".format(self.platform, platform))
         if platform is None:
             self.Platform = platform
 
@@ -162,7 +167,9 @@ class Client:
         seasons = await self.seasons()
         for i in seasons:
             if i.current:
+                log.info("Current season value is {}.".format(i))
                 return i
+        log.error("Can not find current season.")
         raise ValueError("Can not find current season.")
 
     async def seasons(self):

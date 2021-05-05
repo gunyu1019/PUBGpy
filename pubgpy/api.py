@@ -24,9 +24,12 @@ SOFTWARE.
 
 import aiohttp
 import json
+import logging
 
 from . import errors
 from .enums import Platforms
+
+log = logging.getLogger(__name__)
 
 
 class Api:
@@ -95,6 +98,7 @@ class Api:
             url = "{}{}" .format(self.BASE_URL, path)
         async with aiohttp.ClientSession() as session:
             async with session.request(method, url, headers=header) as resp:
+                log.debug("A request has been received. '{}'".format(url))
                 if resp.content_type == "application/json":
                     data = await resp.json()
                 else:
@@ -102,16 +106,22 @@ class Api:
                     data = json.loads(fp_data)
 
                 if resp.status == 200:
+                    log.debug("Successfully received API results.")
                     return data
                 elif resp.status == 401:
+                    log.error("Failed to get response: Unauthorized (Status Code: {})".format(resp.status))
                     raise errors.Unauthorized(resp, data)
                 elif resp.status == 404:
+                    log.error("Failed to get response: Not Found (Status Code: {})".format(resp.status))
                     raise errors.NotFound(resp, data)
                 elif resp.status == 415:
+                    log.error("Failed to get response: Unsupported Media Type (Status Code: {})".format(resp.status))
                     raise errors.UnsupportedMediaType(resp, data)
                 elif resp.status == 429:
+                    log.error("Failed to get response: Too Many Requests (Status Code: {})".format(resp.status))
                     raise errors.TooManyRequests(resp, data)
                 else:
+                    log.error("Failed to get response: {} (Status Code: {})".format(resp.reason, resp.status))
                     raise errors.APIException(resp, data)
 
     async def get(self, path, ni_shards: bool = True, **kwargs):

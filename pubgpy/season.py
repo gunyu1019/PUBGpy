@@ -27,7 +27,21 @@ from .enums import Platforms
 from .models import PUBGModel
 
 
-def get_season(d_season: int, platform):
+def get_season(d_season: int, platform: Platforms):
+    """Randomly creates a season class. It's easier to look up specific season information without additional phrases.
+
+    Parameters
+    ----------
+    d_season : int
+        Any value for the season
+    platform : Platforms
+        Platform information for the season
+
+    Returns
+    -------
+    Season :
+        Contains classes for Season.
+    """
     if platform == Platforms.STEAM or platform == Platforms.KAKAO:
         f_season = "pc"
     elif platform == Platforms.XBOX or platform == Platforms.PLAYSTATION or platform == Platforms.STADIA:
@@ -47,6 +61,21 @@ def get_season(d_season: int, platform):
 
 
 class Season(PUBGModel):
+    """Season objects each contain the ID of a season, which can be used to lookup season information for a player.
+
+    Attributes
+    ----------
+    data : dict
+        Source of Returned Original Data
+    id : str
+        A randomly generated ID assigned to this resource object for linking elsewhere in the season response
+    type : str
+        Identifier for this object type
+    current : bool
+        Indicates if the season is active
+    off_season : bool
+        Indicates if the season is not active
+    """
     def __init__(self, data: dict):
         self.data = data
 
