@@ -83,8 +83,8 @@ class Roster(MatchesBaseModel):
         self.won = attributes.get("won")
 
 #       relationships
-        relationships = data.get("relationships", {})
-        self.teams = [x.get("id") for x in relationships.get("participant", {}).get("data", {})]
+        self.relationships = data.get("relationships", {})
+        self.teams = [x.get("id") for x in self.relationships.get("participants", {}).get("data", {})]
 
     def __repr__(self):
         return "Roster(id='{}' type='{}' shard='{}' rank={} team_id={} won='{}' teams='{}') ".format(
@@ -396,28 +396,6 @@ class Matches(MatchesBaseModel):
                 result = x
         return result
 
-    def get_team(self, team_id: str):
-        """Bring up a list of team members through Team ID.
-
-        Parameters
-        ----------
-        team_id : str
-
-        Returns
-        -------
-        list of Participant :
-            Class of the team members(Participant) is returned.
-        """
-        if team_id not in self.rosters:
-            raise ValueError("Non-existent Team ID")
-
-        member = list()
-        team = self.filter(team_id, Roster)
-        for i in team.teams:
-            x = self.filter(i.id, Participant)
-            member.append(x)
-        return member
-
     def get_player(self, nickname: str):
         """Recall users configured with nicknames from the list of players.
 
@@ -428,7 +406,7 @@ class Matches(MatchesBaseModel):
 
         Returns
         -------
-        Participant :
+        Participant : optional
             If you find a suitable user for the nickname, the appropriate class(Participant) is returned.
         """
         players = self.participant
@@ -446,10 +424,29 @@ class Matches(MatchesBaseModel):
 
         Returns
         -------
-        Participant :
+        Participant : optional
             If you find a suitable user for the nickname, the appropriate class(Participant) is returned.
         """
         players = self.participant
         for i in players:
             if i.player_id == player_id:
                 return i
+
+    def get_team(self, player_id: str):
+        """Bring up a team through user ID.
+
+        Parameters
+        ----------
+        player_id : str
+            Player's ID
+
+        Returns
+        -------
+        Roster : optional
+            If a value exists, the Roster class is returned; if not, None is returned.
+        """
+        rosters = self.roster
+        for team in rosters:
+            for member in team.teams:
+                if member == player_id:
+                    return team

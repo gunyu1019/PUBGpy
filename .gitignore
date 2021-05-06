@@ -131,7 +131,3 @@ dmypy.json
 # IDLE configure
 .idea/
 .vscode/
-
-# TEST Code!
-main.py
-match.json

@@ -101,7 +101,7 @@ class Player(PUBGModel):
 
         Returns
         -------
-        GameMode :
+        GameModeReceive :
             Includes all information about general games by season according to game mode.
         """
         if season is None:
@@ -111,7 +111,7 @@ class Player(PUBGModel):
             season = season.id
         path = "/players/{}/seasons/{}".format(self.id, season)
         resp = await self.client.requests.get(path=path)
-        return GameMode(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
+        return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
 
     async def ranked_stats(self, season: (Season, str) = None):
         """Get ranked stats for a single player.
@@ -123,7 +123,7 @@ class Player(PUBGModel):
 
         Returns
         -------
-        GameMode :
+        GameModeReceive :
             Includes all information about ranked games by season according to game mode.
         """
         if season is None:
@@ -133,19 +133,20 @@ class Player(PUBGModel):
             season = season.id
         path = "/players/{}/seasons/{}/ranked".format(self.id, season)
         resp = await self.client.requests.get(path=path)
-        return GameMode(resp.get("data", {}).get("attributes", {}).get("rankedGameModeStats", {}), RankedStats)
+        print(resp)
+        return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("rankedGameModeStats", {}), RankedStats)
 
     async def lifetime_stats(self):
         """Get lifetime stats for a single player.
 
         Returns
         -------
-        GameMode :
+        GameModeReceive :
             Includes all information about lifetime games by season according to game mode.
         """
         path = "/players/{}/seasons/lifetime".format(self.id)
         resp = await self.client.requests.get(path=path)
-        return GameMode(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
+        return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
 
     async def match(self, position: int = 0):
         """Get a single match.
@@ -272,37 +273,37 @@ class SeasonStats(BaseModel):
         super().__init__(data)
         self.data = data
 
-        self.assists = data.get("assists")
-        self.boosts = data.get("boosts")
-        self.dbnos = data.get("dBNOs")
-        self.daily_kills = data.get("dailyKills")
-        self.daily_wins = data.get("dailyWins")
-        self.damage_dealt = data.get("damageDealt")
-        self.days = data.get("days")
-        self.headshot_kills = data.get("headshotKills")
-        self.heals = data.get("heals")
-        self.kills = data.get("kills")
-        self.longest_kill = data.get("longestKill")
-        self.longest_time_survived = data.get("longestTimeSurvived")
-        self.losses = data.get("losses")
-        self.max_kill_streaks = data.get("maxKillStreaks")
-        self.most_survival_time = data.get("mostSurvivalTime")
-        self.revives = data.get("revives")
-        self.ride_distance = data.get("rideDistance")
-        self.road_kills = data.get("roadKills")
-        self.round_most_kills = data.get("roundMostKills")
-        self.rounds_played = data.get("roundsPlayed")
-        self.suicides = data.get("suicides")
-        self.swim_distance = data.get("swimDistance")
-        self.team_kills = data.get("teamKills")
-        self.time_survived = data.get("timeSurvived")
-        self.top10s = data.get("top10s")
-        self.vehicle_destroys = data.get("vehicleDestroys")
-        self.walk_distance = data.get("walkDistance")
-        self.weapons_acquired = data.get("weaponsAcquired")
-        self.weekly_kills = data.get("weeklyKills")
-        self.weekly_wins = data.get("weeklyWins")
-        self.wins = data.get("wins")
+        self.assists = data.get("assists", 0)
+        self.boosts = data.get("boosts", 0)
+        self.dbnos = data.get("dBNOs", 0)
+        self.daily_kills = data.get("dailyKills", 0)
+        self.daily_wins = data.get("dailyWins", 0)
+        self.damage_dealt = data.get("damageDealt", 0)
+        self.days = data.get("days", 0)
+        self.headshot_kills = data.get("headshotKills", 0)
+        self.heals = data.get("heals", 0)
+        self.kills = data.get("kills", 0)
+        self.longest_kill = data.get("longestKill", 0)
+        self.longest_time_survived = data.get("longestTimeSurvived", 0)
+        self.losses = data.get("losses", 0)
+        self.max_kill_streaks = data.get("maxKillStreaks", 0)
+        self.most_survival_time = data.get("mostSurvivalTime", 0)
+        self.revives = data.get("revives", 0)
+        self.ride_distance = data.get("rideDistance", 0)
+        self.road_kills = data.get("roadKills", 0)
+        self.round_most_kills = data.get("roundMostKills", 0)
+        self.rounds_played = data.get("roundsPlayed", 0)
+        self.suicides = data.get("suicides", 0)
+        self.swim_distance = data.get("swimDistance", 0)
+        self.team_kills = data.get("teamKills", 0)
+        self.time_survived = data.get("timeSurvived", 0)
+        self.top10s = data.get("top10s", 0)
+        self.vehicle_destroys = data.get("vehicleDestroys", 0)
+        self.walk_distance = data.get("walkDistance", 0)
+        self.weapons_acquired = data.get("weaponsAcquired", 0)
+        self.weekly_kills = data.get("weeklyKills", 0)
+        self.weekly_wins = data.get("weeklyWins", 0)
+        self.wins = data.get("wins", 0)
 
     def __repr__(self):
         return "SeasonStats(assists={}, boosts={}, dBNOs={} daily_kills={} daily_wins={} damage_dealt={} " \
@@ -361,21 +362,21 @@ class RankedStats(BaseModel):
         super().__init__(data)
         self.data = data
 
-        self.current = Rank(tier=data.get("currentTier"), point=data.get("currentRankPoint"))
-        self.best = Rank(tier=data.get("bestTier"), point=data.get("bestRankPoint"))
+        self.current = Rank(tier=data.get("currentTier", {}), point=data.get("currentRankPoint"))
+        self.best = Rank(tier=data.get("bestTier", {}), point=data.get("bestRankPoint"))
 
-        self.assists = data.get("assists")
-        self.avg_rank = data.get("avgRank")
-        self.dbnos = data.get("dBNOs")
-        self.deaths = data.get("deaths")
-        self.damage_dealt = data.get("damageDealt")
-        self.kda = data.get("kda")
-        self.kills = data.get("kills")
-        self.rounds_played = data.get("roundsPlayed")
-        self.top10_ratio = data.get("top10Ratio")
-        self.top10s = int(self.rounds_played * data.get("top10Ratio"))
-        self.win_ratio = data.get("winRatio")
-        self.wins = data.get("wins")
+        self.assists = data.get("assists", 0)
+        self.avg_rank = data.get("avgRank", 0)
+        self.dbnos = data.get("dBNOs", 0)
+        self.deaths = data.get("deaths", 0)
+        self.damage_dealt = data.get("damageDealt", 0)
+        self.kda = data.get("kda", 0)
+        self.kills = data.get("kills", 0)
+        self.rounds_played = data.get("roundsPlayed", 0)
+        self.top10_ratio = data.get("top10Ratio", 0.0)
+        self.top10s = int(self.rounds_played * self.top10_ratio)
+        self.win_ratio = data.get("winRatio", 0.0)
+        self.wins = data.get("wins", 0)
 
     def __repr__(self):
         return "RankedStats(assists={} avg_rank={} dbnos={} deaths={} damage_dealt={} kda={} kills={} " \
@@ -431,7 +432,7 @@ class Rank:
         return "{} {}".format(self.tier, self.subtier)
 
 
-class GameMode(BaseModel):
+class GameModeReceive(BaseModel):
     """If the information varies depending on the game mode, check it through the appropriate class.
 
     Attributes
@@ -469,7 +470,7 @@ class GameMode(BaseModel):
             self.duo_fpp = None
 
     def __repr__(self):
-        return "GameMode(type='{}')".format(self.type_class.__name__)
+        return "GameModeReceive(type='{}')".format(self.type_class.__name__)
 
     def __str__(self):
         return self.__repr__()
@@ -502,13 +503,13 @@ class Stats(BaseModel):
         super().__init__(data)
         if data is not None:
             self.data = data
-            self.average_damage = data.get("averageDamage")
-            self.average_rank = data.get("averageRank")
-            self.rounds_played = data.get("games")
+            self.average_damage = data.get("averageDamage", 0)
+            self.average_rank = data.get("averageRank", 0)
+            self.rounds_played = data.get("games", 0)
             self.tier = Rank(tier=data, point=data.get("rankPoints"))
-            self.kda = data.get("kda")
-            self.kills = data.get("kills")
-            self.wins = data.get("wins")
+            self.kda = data.get("kda", 0)
+            self.kills = data.get("kills", 0)
+            self.wins = data.get("wins", 0)
 
     def __repr__(self):
         return "Stats(average_damage={} average_rank={} rounds_played={} tier={} kda={} kills={} " \

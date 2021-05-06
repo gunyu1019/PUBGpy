@@ -10,7 +10,9 @@ async def main():
     player = await client.player("gunyu1128")
     resp = await player.season_stats(season=pubgpy.get_season(d_season=10, platform=pubgpy.Platforms.STEAM))
 
-    print(resp.solo.kills)
+    print("Nickname: {}".format(player.name))
+    print("Assets: {}".format(resp.squad.kills))
+    print("Kills: {}".format(resp.squad.kills))
 
 event = asyncio.get_event_loop()
 event.run_until_complete(main())

@@ -75,9 +75,9 @@ class Leaderboards(PUBGModel):
         relationships = self.data.get("relationships")
 
         def search_people(player_id):
-            next(players for players in self.included if players == player_id)
+            return next(players for players in self.included if players.id == player_id)
 
-        for x in relationships.get("players"):
+        for x in relationships.get("players", {}).get("data", []):
             self.players.append(search_people(x.get("id")))
 
     def __repr__(self):

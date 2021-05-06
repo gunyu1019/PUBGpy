@@ -10,13 +10,13 @@ async def main():
     player = await client.player("gunyu1128")
     resp = await player.match(position=0)
 
-    player_stats = resp.get_player(player.name)
-    team = resp.roster[0]
-    member_id = team.teams[0]
-    member = resp.filter(pubgpy.Participant, member_id)
+    player_stats = resp.get_player(nickname=player.name)
+    team = resp.get_team(player_id=player_stats.id)
+    member = team.teams
 
-    print(player_stats.kills)
-    print(member.kills)
+    print("Team Member: {}".format(member))
+    print("Kill: {}".format(player_stats.kills))
+
 
 event = asyncio.get_event_loop()
 event.run_until_complete(main())

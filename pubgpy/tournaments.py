@@ -52,10 +52,11 @@ class Tournaments(PUBGModel):
     """
     def __init__(self, client, data):
         self.data = data
-        super().__init__(data)
         self.client = client
         self.id = data.get("id")
         self.type = data.get("type", "tournament")
+
+        super().__init__(self)
 
         created_at = data.get("attributes", {}).get("createdAt")
         if created_at is not None:
@@ -112,4 +113,4 @@ class Tournaments(PUBGModel):
         Tournaments :
             Returns a tournament value that has been loaded properly.
         """
-        return self.client.tournament_id(self.id)
+        return await self.client.tournament_id(self.id)
