@@ -1,4 +1,7 @@
 # PUBGpy
+
+![pubgpy](https://user-images.githubusercontent.com/16767890/121933538-2e86e600-cd81-11eb-8ed6-0f85540be74c.png)
+
 A python wrapper for Battleground API.<br/>
 It is composed of asynchronous devices, enabling more efficient use of modules.
 
