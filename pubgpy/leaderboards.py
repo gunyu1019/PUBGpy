@@ -1,5 +1,4 @@
-"""
-MIT License
+""" MIT License
 
 Copyright (c) 2021 gunyu1019
 
@@ -28,7 +27,7 @@ from .player import Player
 
 
 class Leaderboards(PUBGModel):
-    """Leaderboard objects show the current rank of the top 500 players for a game mode.
+    """ Leaderboard objects show the current rank of the top 500 players for a game mode.
 
     Attributes
     ----------
