@@ -29,7 +29,7 @@ from datetime import datetime
 
 
 class Tournaments(PUBGModel):
-    """Tournament objects contain information about a tournament, mainly the IDs of its matches.
+    """ Tournament objects contain information about a tournament, mainly the IDs of its matches.
 
     Attributes
     ----------
@@ -73,7 +73,8 @@ class Tournaments(PUBGModel):
         return self.id
 
     async def match(self, position: int = 0):
-        """Get a tournament match.
+        """
+        Get a tournament match.
 
         Notes
         -----
@@ -105,7 +106,8 @@ class Tournaments(PUBGModel):
         return Matches(data=data, included=included)
 
     async def load(self):
-        """Call in detail about the competition.
+        """
+        Call in detail about the competition.
          In order to include match information and the opening time of the competition, information must be recalled.
 
         Returns

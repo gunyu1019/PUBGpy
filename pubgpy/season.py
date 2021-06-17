@@ -28,7 +28,8 @@ from .models import PUBGModel
 
 
 def get_season(d_season: int, platform: Platforms):
-    """Randomly creates a season class. It's easier to look up specific season information without additional phrases.
+    """
+    Randomly creates a season class. It's easier to look up specific season information without additional phrases.
 
     Parameters
     ----------
@@ -61,7 +62,7 @@ def get_season(d_season: int, platform: Platforms):
 
 
 class Season(PUBGModel):
-    """Season objects each contain the ID of a season, which can be used to lookup season information for a player.
+    """ Season objects each contain the ID of a season, which can be used to lookup season information for a player.
 
     Attributes
     ----------

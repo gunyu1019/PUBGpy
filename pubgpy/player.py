@@ -1,5 +1,4 @@
-"""
-MIT License
+""" MIT License
 
 Copyright (c) 2021 gunyu1019
 
@@ -29,7 +28,7 @@ from .enums import get_enum, Platforms
 
 
 class Player(PUBGModel):
-    """Player objects contain information about a player and a list of their recent matches (up to 14 days old).
+    """ Player objects contain information about a player and a list of their recent matches (up to 14 days old).
 
     Notes
     -----
@@ -92,7 +91,8 @@ class Player(PUBGModel):
         return self.name
 
     async def season_stats(self, season: (Season, str) = None):
-        """Get season information for a single player.
+        """
+        Get season information for a single player.
 
         Parameters
         ----------
@@ -114,7 +114,8 @@ class Player(PUBGModel):
         return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
 
     async def ranked_stats(self, season: (Season, str) = None):
-        """Get ranked stats for a single player.
+        """
+        Get ranked stats for a single player.
 
         Parameters
         ----------
@@ -137,7 +138,8 @@ class Player(PUBGModel):
         return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("rankedGameModeStats", {}), RankedStats)
 
     async def lifetime_stats(self):
-        """Get lifetime stats for a single player.
+        """
+        Get lifetime stats for a single player.
 
         Returns
         -------
@@ -149,7 +151,8 @@ class Player(PUBGModel):
         return GameModeReceive(resp.get("data", {}).get("attributes", {}).get("gameModeStats", {}), SeasonStats)
 
     async def match(self, position: int = 0):
-        """Get a single match.
+        """
+        Get a single match.
 
         Notes
         -----
@@ -175,7 +178,8 @@ class Player(PUBGModel):
         return await self.client.matches(match_id=self.matches[position])
 
     async def weapon(self):
-        """Get weapon mastery information for a single player
+        """
+        Get weapon mastery information for a single player
 
         Returns
         -------
@@ -185,9 +189,10 @@ class Player(PUBGModel):
         path = "/players/{}/weapon_mastery".format(self.id)
         resp = await self.client.requests.get(path=path)
         return Weapon(resp)
-    
+
     async def survival(self):
-        """Get survival mastery information for a single player
+        """
+        Get survival mastery information for a single player
 
         Returns
         -------
@@ -200,7 +205,7 @@ class Player(PUBGModel):
 
 
 class SeasonStats(BaseModel):
-    """Game Mode stats objects contain a player's aggregated stats for a game mode in the context of a season.
+    """ Game Mode stats objects contain a player's aggregated stats for a game mode in the context of a season.
 
     Attributes
     ----------
@@ -324,7 +329,7 @@ class SeasonStats(BaseModel):
 
 
 class RankedStats(BaseModel):
-    """Ranked Game Mode stats objects contain a player's aggregated
+    """ Ranked Game Mode stats objects contain a player's aggregated
      ranked stats for a game mode in the context of a season.
 
     Attributes
@@ -389,7 +394,7 @@ class RankedStats(BaseModel):
 
 
 class Rank:
-    """Scores earned in competition are included.
+    """ Scores earned in competition are included.
 
     Attributes
     ----------
@@ -433,7 +438,7 @@ class Rank:
 
 
 class GameModeReceive(BaseModel):
-    """If the information varies depending on the game mode, check it through the appropriate class.
+    """ If the information varies depending on the game mode, check it through the appropriate class.
 
     Attributes
     ----------
@@ -477,7 +482,7 @@ class GameModeReceive(BaseModel):
 
 
 class Stats(BaseModel):
-    """Total information returned by the player.
+    """ Total information returned by the player.
     Currently, it can only be checked through :Attributes:`Player.stats` imported from the leaderboard.
 
     Attributes

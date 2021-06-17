@@ -1,7 +1,7 @@
 import pubgpy
 import asyncio
 
-token = "<PUBG TOKEN>"
+token = "token"
 
 
 async def main():

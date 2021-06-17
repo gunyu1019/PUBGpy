@@ -1,5 +1,4 @@
-"""
-MIT License
+""" MIT License
 
 Copyright (c) 2021 gunyu1019
 
@@ -44,7 +43,7 @@ class MatchesBaseModel(BaseModel):
 
 
 class Roster(MatchesBaseModel):
-    """Rosters track the scores of each opposing group of participants. Rosters can have one or many participants
+    """ Rosters track the scores of each opposing group of participants. Rosters can have one or many participants
      depending on the game mode. Roster objects are only meaningful within the context of a match and are not exposed
       as a standalone resource.
 
@@ -95,7 +94,7 @@ class Roster(MatchesBaseModel):
 
 
 class Participant(MatchesBaseModel):
-    """Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
+    """ Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
      of event objects that provide further insight into a match.
 
     Attributes
@@ -209,7 +208,7 @@ class Participant(MatchesBaseModel):
 
 
 class Assets(MatchesBaseModel):
-    """Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
+    """ Asset objects contain a URL string that links to a telemetry.json file, which will contain an array
      of event objects that provide further insight into a match.
 
     Attributes
@@ -254,7 +253,7 @@ class Assets(MatchesBaseModel):
 
 
 class Matches(MatchesBaseModel):
-    """	Match objects contain information about a completed match such as the game mode played, duration,
+    """ Match objects contain information about a completed match such as the game mode played, duration,
      and which players participated.
 
     Attributes
@@ -345,16 +344,17 @@ class Matches(MatchesBaseModel):
                 self.asset.append(Assets(i))
 
     def __repr__(self):
-        return "Matches(id='{}' type='{}' game_mode='{}' title='{}' shard='{}' tags='{}' map_name='{}' " \
-               "match_type='{}' duration={} stats'{}' season_state='{}' created_at='{}' custom='{}') ".format(
-                self.id, self.type, self.game_mode, self.title, self.shard, self.tags, self.map_name, self.match_type,
-                self.duration, self.stats, self.season_state, self.created_at, self.custom)
+        return "Matches(id='{}' type='{}' gamemode='{}' title='{}' shard='{}' tags='{}' map_name='{}' " \
+               "match_type='{}' duration={} stats'{}' state='{}' created_at='{}' custom='{}') ".format(
+                self.id, self.type, self.gamemode, self.title, self.shard, self.tags, self.map, self.match_type,
+                self.duration, self.stats, self.state, self.created_at, self.custom)
 
     def __str__(self):
         return self.__repr__()
 
     def filter(self, filter_id, base_model: (Roster, Participant, Assets) = None):
-        """Find class(Roster, Participant, Assets) for a specific ID.
+        """
+        Find class(Roster, Participant, Assets) for a specific ID.
 
         Parameters
         ----------
@@ -397,7 +397,8 @@ class Matches(MatchesBaseModel):
         return result
 
     def get_player(self, nickname: str):
-        """Recall users configured with nicknames from the list of players.
+        """
+        Recall users configured with nicknames from the list of players.
 
         Parameters
         ----------
@@ -415,7 +416,8 @@ class Matches(MatchesBaseModel):
                 return i
 
     def get_player_id(self, player_id: str):
-        """Recall users configured with player's id from the list of players.
+        """
+        Recall users configured with player's id from the list of players.
 
         Parameters
         ----------
@@ -433,7 +435,8 @@ class Matches(MatchesBaseModel):
                 return i
 
     def get_team(self, player_id: str):
-        """Bring up a team through user ID.
+        """
+        Bring up a team through user ID.
 
         Parameters
         ----------

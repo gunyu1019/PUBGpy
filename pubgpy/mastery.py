@@ -1,5 +1,4 @@
-"""
-MIT License
+""" MIT License
 
 Copyright (c) 2021 gunyu1019
 
@@ -27,7 +26,7 @@ from .enums import Platforms, get_enum
 
 
 class Weapon(PUBGModel):
-    """Weapon Mastery contains weapon summaries for the lifetime of a player
+    """ Weapon Mastery contains weapon summaries for the lifetime of a player
 
     Attributes
     ----------
@@ -72,7 +71,7 @@ class Weapon(PUBGModel):
 
 
 class WeaponSummary(BaseModel):
-    """Weapon summary for each weapon
+    """ Weapon summary for each weapon
 
     Attributes
     ----------
@@ -114,7 +113,7 @@ class WeaponSummary(BaseModel):
 
     def __init__(self, data):
         self.data = data
-        super(BaseModel, self).__init__(data)
+        super().__init__(data)
 
         self.xp = self.data.get("XPTotal")
         self.level = self.data.get("LevelCurrent")
@@ -152,7 +151,7 @@ class WeaponSummary(BaseModel):
 
 
 class Medal(BaseModel):
-    """All of the medals received for this weapon
+    """ All of the medals received for this weapon
 
     Attributes
     ----------
@@ -179,7 +178,7 @@ class Medal(BaseModel):
 
 
 class Survival(PUBGModel):
-    """Survival Mastery contains survival mastery data for a player
+    """ Survival Mastery contains survival mastery data for a player
 
     Attributes
     ----------
@@ -271,7 +270,7 @@ class Survival(PUBGModel):
 
 
 class Stats(BaseModel):
-    """Model for stats values from Survival Mastery.
+    """ Model for stats values from Survival Mastery.
 
     Attributes
     ----------
