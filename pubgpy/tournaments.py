@@ -52,14 +52,14 @@ class Tournaments(PUBGModel):
     def __init__(self, client, data):
         self.data = data
         self.client = client
-        self.id = data.get("id")
-        self.type = data.get("type", "tournament")
+        self.id: str = data.get("id")
+        self.type: str = data.get("type", "tournament")
 
         super().__init__(self)
 
         created_at = data.get("attributes", {}).get("createdAt")
         if created_at is not None:
-            self.created_at = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
+            self.created_at: datetime = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
 
         relationships = data.get("relationships")
         self.matches = list()

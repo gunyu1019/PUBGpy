@@ -29,8 +29,8 @@ from .enums import MatchType, MapName, SeasonStats, get_enum, DeathType, GameMod
 class MatchesBaseModel(BaseModel):
     """Base model for match data."""
     def __init__(self, match_class):
-        self.id = match_class.id
-        self.type = match_class.type
+        self.id: str = match_class.id
+        self.type: str = match_class.type
         super().__init__(match_class.data)
 
     def __eq__(self, other):
@@ -69,17 +69,17 @@ class Roster(MatchesBaseModel):
     def __init__(self, data):
         self.data = data
 
-        self.type = data.get("type", "roster")
-        self.id = data.get("id")
+        self.type: str = data.get("type", "roster")
+        self.id: str = data.get("id")
 
         super().__init__(self)
 
 #       attributes
         attributes = data.get("attributes", {})
-        self.shard = attributes.get("shardId")
-        self.rank = attributes.get("stats", {}).get("rank")
-        self.team_id = attributes.get("stats", {}).get("teamId")
-        self.won = attributes.get("won")
+        self.shard: Platforms = get_enum(Platforms, attributes.get("shardId"))
+        self.rank: int = attributes.get("stats", {}).get("rank")
+        self.team_id: int = attributes.get("stats", {}).get("teamId")
+        self.won: str = attributes.get("won")
 
 #       relationships
         self.relationships = data.get("relationships", {})
@@ -157,39 +157,39 @@ class Participant(MatchesBaseModel):
     def __init__(self, data):
         self.data = data
 
-        self.type = data.get("type", "participant")
-        self.id = data.get("id")
+        self.type: str = data.get("type", "participant")
+        self.id: str = data.get("id")
         super().__init__(self)
 
 #       attributes
         attributes = data.get("attributes", {})
-        self.shard = attributes.get("shardId")
+        self.shard = get_enum(Platforms, attributes.get("shardId"))
 
 #       attributes(stats)
         stats = attributes.get("stats", {})
-        self.dbnos = stats.get("DBNOs")
-        self.assists = stats.get("assists")
-        self.boosts = stats.get("boosts")
-        self.damage_dealt = stats.get("damageDealt")
-        self.death_type = get_enum(DeathType, stats.get("deathType"))
-        self.headshot_kills = stats.get("headshotKills")
-        self.heals = stats.get("heals")
-        self.kill_place = stats.get("killPlace")
-        self.kill_streaks = stats.get("killStreaks")
-        self.kills = stats.get("kills")
-        self.longest_kill = stats.get("longestKill")
-        self.name = stats.get("name")
-        self.player_id = stats.get("playerId")
-        self.revives = stats.get("revives")
-        self.ride_distance = stats.get("rideDistance")
-        self.road_kills = stats.get("roadKills")
-        self.swim_distance = stats.get("swimDistance")
-        self.team_kills = stats.get("teamKills")
-        self.time_survived = stats.get("timeSurvived")
-        self.vehicle_destroys = stats.get("vehicleDestroys")
-        self.walk_distance = stats.get("walkDistance")
-        self.weapons_acquired = stats.get("weaponsAcquired")
-        self.win_place = stats.get("winPlace")
+        self.dbnos: int = stats.get("DBNOs", 0)
+        self.assists: int = stats.get("assists", 0)
+        self.boosts: int = stats.get("boosts", 0)
+        self.damage_dealt: float = stats.get("damageDealt", 0.0)
+        self.death_type: DeathType = get_enum(DeathType, stats.get("deathType"))
+        self.headshot_kills: int = stats.get("headshotKills", 0)
+        self.heals: int = stats.get("heals", 0)
+        self.kill_place: int = stats.get("killPlace", 0)
+        self.kill_streaks: int = stats.get("killStreaks", 0)
+        self.kills: int = stats.get("kills", 0)
+        self.longest_kill: float = stats.get("longestKill", 0.0)
+        self.name: str = stats.get("name")
+        self.player_id: str = stats.get("playerId")
+        self.revives: int = stats.get("revives", 0)
+        self.ride_distance: float = stats.get("rideDistance", 0.0)
+        self.road_kills: int = stats.get("roadKills", 0)
+        self.swim_distance: float = stats.get("swimDistance", 0.0)
+        self.team_kills: int = stats.get("teamKills", 0)
+        self.time_survived: float = stats.get("timeSurvived", 0.0)
+        self.vehicle_destroys: int = stats.get("vehicleDestroys", 0)
+        self.walk_distance: float = stats.get("walkDistance", 0.0)
+        self.weapons_acquired: int = stats.get("weaponsAcquired", 0)
+        self.win_place: int = stats.get("winPlace", 0)
 
     def __repr__(self):
         return "Participant(id='{}' type='{}' shard='{}' dbnos={} assists={} boosts={} damage_dealt={} " \
@@ -238,11 +238,11 @@ class Assets(MatchesBaseModel):
 
 #       attributes
         attributes = data.get("attributes", {})
-        self.shard = attributes.get("shardId")
-        self.url = attributes.get("url")
+        self.shard: Platforms = get_enum(Platforms, attributes.get("shardId"))
+        self.url: str = attributes.get("url")
         created_at = attributes.get("createdAt")
-        self.created_at = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
-        self.name = attributes.get("name", "Telemetry")
+        self.created_at: datetime = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)
+        self.name: str = attributes.get("name", "Telemetry")
 
     def __repr__(self):
         return "Assets(id='{}' type='{}' shard='{}' url='{}' created_at='{}' name='{}') ".format(
@@ -304,21 +304,21 @@ class Matches(MatchesBaseModel):
         self.included = included
 
 #       data Information (general)
-        self.id = data.get("id")
-        self.type = data.get("type", "matches")
+        self.id: str = data.get("id")
+        self.type: str = data.get("type", "matches")
         super().__init__(self)
 
 #       data Information (attributes)
         attributes = data.get("attributes", {})
-        self.gamemode = get_enum(GameMode, attributes.get("gameMode"))
-        self.title = attributes.get("titleId")
-        self.shard = get_enum(Platforms, attributes.get("shardId"))
-        self.tags = attributes.get("tags")
-        self.map = get_enum(MapName, attributes.get("mapName"))
-        self.match_type = get_enum(MatchType, attributes.get("matchType"))
-        self.duration = attributes.get("duration")
-        self.stats = attributes.get("stats")
-        self.state = get_enum(SeasonStats, attributes.get("seasonState"))
+        self.gamemode: GameMode = get_enum(GameMode, attributes.get("gameMode"))
+        self.title: str = attributes.get("titleId")
+        self.shard: Platforms = get_enum(Platforms, attributes.get("shardId"))
+        self.tags: str = attributes.get("tags")
+        self.map: MapName = get_enum(MapName, attributes.get("mapName"))
+        self.match_type: MatchType = get_enum(MatchType, attributes.get("matchType"))
+        self.duration: int = attributes.get("duration")
+        self.stats: str = attributes.get("stats")
+        self.state: SeasonStats = get_enum(SeasonStats, attributes.get("seasonState"))
 
         created_at = attributes.get("createdAt")
         self.created_at = datetime.strptime(created_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=None)

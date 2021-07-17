@@ -34,6 +34,8 @@ from .leaderboards import Leaderboards
 from .tournaments import Tournaments
 from .sample import Sample
 
+from typing import Union
+
 log = logging.getLogger(__name__)
 
 
@@ -50,16 +52,16 @@ class Client:
         `Platforms` information to report with API by substituting the value of `Platform` or string.
         Sometimes the platform type is not required for some features that do not require it.
     """
-    def __init__(self, token: str, platform: (str, Platforms) = None):
+    def __init__(self, token: str, platform: Union[str, Platforms] = None):
         self.token = token
         if isinstance(platform, Platforms):
-            self.Platform = platform.value
+            self._platform = platform.value
         else:
-            self.Platform = platform
-        self.requests = Api(token=token, platform=self.Platform)
+            self._platform = platform
+        self.requests = Api(token=token, platform=self._platform)
         log.info("PUBGpy client was created. (Platform: {})".format(platform))
 
-    def platform(self, platform: (str, Platforms) = None) -> (Platforms, str):
+    def platform(self, platform: Union[str, Platforms] = None) -> Union[Platforms, str]:
         """
         Change the platform type through the function.
 
@@ -76,10 +78,15 @@ class Client:
             Returns platform value set.
         """
         log.info("PUBGpy changed platform ({} -> {})".format(self.platform, platform))
-        if platform is None:
-            self.Platform = platform
+        if platform is not None:
+            if isinstance(platform, Platforms):
+                self._platform = platform.value
+                self.requests.platform = self._platform
+            else:
+                self._platform = platform
+                self.requests.platform = self._platform
 
-        return get_enum(Platforms, self.Platform)
+        return get_enum(Platforms, self._platform)
 
     def player_id(self, player_id: str) -> Player:
         """
@@ -210,7 +217,7 @@ class Client:
         data = await player.season_stats(season)
         return data
 
-    async def ranked_stats(self, player_id: str, season: (Season, str) = None):
+    async def ranked_stats(self, player_id: str, season: Union[Season, str] = None):
         """
         Get ranked stats for a single player.
 
@@ -385,7 +392,12 @@ class Client:
             return False
         return True
 
-    async def leaderboards(self, region: (str, Region), game_mode: (str, GameMode), season: (str, Season) = None):
+    async def leaderboards(
+            self,
+            region: Union[str, Region],
+            game_mode: Union[str, GameMode],
+            season: Union[str, Season] = None
+    ):
         """
         Get the leaderboard for a game mode.
 

@@ -79,12 +79,12 @@ class Season(PUBGModel):
     def __init__(self, data: dict):
         self.data = data
 
-        self.type = self.data.get("type")
-        self.id = self.data.get("id", "season")
+        self.type: str = self.data.get("type")
+        self.id: str = self.data.get("id", "season")
         super().__init__(self)
 
-        self.current = self.data.get("attributes", {}).get("isCurrentSeason")
-        self.off_season = self.data.get("attributes", {}).get("isOffseason")
+        self.current: bool = self.data.get("attributes", {}).get("isCurrentSeason")
+        self.off_season: bool = self.data.get("attributes", {}).get("isOffseason")
 
     def __repr__(self):
         return "Season(id='{}', current='{}', type='{}')".format(self.id, self.current, self.type)
